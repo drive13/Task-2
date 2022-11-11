@@ -12,7 +12,7 @@
                                 {{-- <div class="my-auto">
                                 </div> --}}
                                 <i class="bi bi-person-circle fs-4 mb-3"></i>
-                                <div class="d-none d-md-block d-lg-inline-block">&nbsp;Hi, Saugi</div>
+                                <div class="d-none d-md-block d-lg-inline-block">&nbsp;{{ Auth::user()->name }}</div>
                             </a>
                             <div class="dropdown-menu dropdown-menu-end">
                                 {{-- <a class="dropdown-item" href="#"><i data-feather="user"></i> Account</a>
