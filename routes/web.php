@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,8 +20,9 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
-Route::get('/', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::resource('/product', ProductController::class)->middleware('auth');
+Route::resource('/customer', CustomerController::class)->middleware('auth');
 
 require __DIR__ . '/auth.php';

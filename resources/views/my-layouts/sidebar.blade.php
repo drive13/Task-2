@@ -12,14 +12,14 @@
                                 <span>Dashboard</span>
                             </a>
                         </li>
-                        <li class="sidebar-item {{ Request::is('/') ? 'active' : '' }}">
-                            <a href="/" class='sidebar-link'>
+                        <li class="sidebar-item {{ Request::is('product') ? 'active' : '' }}">
+                            <a href="{{ route('product.index') }}" class='sidebar-link'>
                                 <i data-feather="home" width="20"></i> 
                                 <span>Product</span>
                             </a>
                         </li>
-                        <li class="sidebar-item {{ Request::is('/') ? 'active' : '' }}">
-                            <a href="/" class='sidebar-link'>
+                        <li class="sidebar-item {{ Request::is('customer') ? 'active' : '' }}">
+                            <a href="{{ route('customer.index') }}" class='sidebar-link'>
                                 <i data-feather="home" width="20"></i> 
                                 <span>Customer</span>
                             </a>
