@@ -15,7 +15,10 @@ class SalesOrderController extends Controller
      */
     public function index()
     {
-        //
+        return view('order.listSalesOrder', [
+            'title' => 'List Sales Orders',
+            'orders' => SalesOrder::latest()->get(),
+        ]);
     }
 
     /**
