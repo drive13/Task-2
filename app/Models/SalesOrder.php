@@ -13,6 +13,7 @@ class SalesOrder extends Model
         'invoice',
         'date',
         'product_id',
+        'qty',
         'customer_id',
     ];
 }

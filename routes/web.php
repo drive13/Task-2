@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
@@ -27,5 +28,7 @@ Route::get('/', [DashboardController::class, 'index'])->middleware('auth');
 Route::resource('/product', ProductController::class)->middleware('auth');
 Route::resource('/customer', CustomerController::class)->middleware('auth');
 Route::resource('/orders', SalesOrderController::class)->middleware('auth');
+
+Route::post('/ajax-product', [AjaxController::class, 'product'])->middleware('auth');
 
 require __DIR__ . '/auth.php';

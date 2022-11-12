@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('invoice');
             $table->string('date');
             $table->integer('product_id');
+            $table->integer('qty');
             $table->integer('customer_id');
         });
     }

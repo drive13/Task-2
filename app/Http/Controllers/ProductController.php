@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -37,9 +38,18 @@ class ProductController extends Controller
      * @param  \App\Http\Requests\StoreProductRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreProductRequest $request)
+    public function store(Request $request)
     {
-        //
+        // dd($request);
+        $validatedData = $request->validate([
+            'product' => 'required',
+            'code_product' => 'required|unique:products',
+            'price' => 'required',
+            'stock' => 'required|integer',
+        ]);
+
+        Product::create($validatedData);
+        return back()->with('success', 'New product has been successfully added!');
     }
 
     /**
@@ -71,9 +81,17 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(Request $request, Product $product)
     {
-        //
+        $validatedData = $request->validate([
+            'product' => 'required',
+            'code_product' => 'required',
+            'price' => 'required',
+            'stock' => 'required|integer',
+        ]);
+
+        Product::where('id', $product->id)->update($validatedData);
+        return back()->with('success', 'Product has been updated successfully!');
     }
 
     /**
@@ -84,6 +102,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        Product::destroy($product->id);
+        return back()->with('success', 'Product has been deleted successfully!');
     }
 }
