@@ -30,5 +30,6 @@ Route::resource('/customer', CustomerController::class)->middleware('auth');
 Route::resource('/orders', SalesOrderController::class)->middleware('auth');
 
 Route::post('/ajax-product', [AjaxController::class, 'product'])->middleware('auth');
+Route::post('/ajax-customer', [AjaxController::class, 'customer'])->middleware('auth');
 
 require __DIR__ . '/auth.php';

@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
-use App\Http\Requests\StoreCustomerRequest;
-use App\Http\Requests\UpdateCustomerRequest;
+use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
@@ -34,12 +33,20 @@ class CustomerController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreCustomerRequest  $request
+     * @param  \App\Http\Requests\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreCustomerRequest $request)
+    public function store(Request $request)
     {
-        //
+        // dd($request);
+        $validatedData = $request->validate([
+            'name' => 'required',
+            'phone' => 'required|unique:customers',
+            'address' => 'required',
+        ]);
+
+        Customer::create($validatedData);
+        return back()->with('success', 'New customer has been successfully added!');
     }
 
     /**
@@ -71,9 +78,16 @@ class CustomerController extends Controller
      * @param  \App\Models\Customer  $customer
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateCustomerRequest $request, Customer $customer)
+    public function update(Request $request, Customer $customer)
     {
-        //
+        $validatedData = $request->validate([
+            'name' => 'required',
+            'phone' => 'required',
+            'address' => 'required',
+        ]);
+
+        Customer::where('id', $customer->id)->update($validatedData);
+        return back()->with('success', 'Customer has been updated successfully!');
     }
 
     /**
@@ -84,6 +98,7 @@ class CustomerController extends Controller
      */
     public function destroy(Customer $customer)
     {
-        //
+        Customer::destroy($customer->id);
+        return back()->with('success', 'Customer has been deleted successfully!');
     }
 }

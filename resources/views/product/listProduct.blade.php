@@ -70,12 +70,11 @@
                                         <td>{{ $product->price }}</td>
                                         <td>{{ $product->stock }}</td>
                                         <td class="text-center">
-                                            <a class="btn btn-sm btn-warning editProduct" href="javascript:void(0)" data-id="{{ $product->id }}" data-bs-toggle="modal" data-bs-target="#modalProduct">Edit</a>
-                                            {{-- <a class="btn btn-sm btn-danger" href="">Delete</a> --}}
+                                            <a class="btn btn-sm btn-warning editProduct" href="#" data-id="{{ $product->id }}" data-bs-toggle="modal" data-bs-target="#modalProduct">Edit</a>
                                             <form action="/product/{{ $product->id }}" method="post" class="d-inline">
-                                            @method('delete')
-                                            @csrf
-                                            <button class="btn btn-danger" type="submit">Delete</button>
+                                                @method('delete')
+                                                @csrf
+                                                <button class="btn btn-danger" type="submit">Delete</button>
                                             </form>
                                         </td>
                                     </tr>
@@ -98,7 +97,6 @@
                 </div>
                 <form id="formModal" action="" method="POST">
                     @csrf
-                    {{-- @method('PATCH') --}}
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="product">Product</label>
@@ -138,9 +136,9 @@
                 $('#product').val('');
                 $('#code_product').val('');
                 $('#price').val('');
+                $('#stock').val('');
                 // console.log('oke');
                 $('#modalProductLabel').html('Add Product');
-                // $('#formModal').attr('method', 'POST');
                 $('#formModal').append('<input type="hidden" name="_method" value="POST">');
                 $('.modal-footer button[type=submit]').html('Save');
                 $('.modal-content form').attr('action', '/product');
@@ -151,7 +149,6 @@
                 // console.log(id);
                 
                 $('#modalProductLabel').html('Edit Product');
-                // $('#formModal').attr('method', 'PATCH');
                 $('#formModal').append('<input type="hidden" name="_method" value="PATCH">');
                 $('.modal-footer button[type=submit]').html('Save Changes');
                 $('.modal-content form').attr('action', '/product/' + id);
