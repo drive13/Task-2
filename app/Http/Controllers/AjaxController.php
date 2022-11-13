@@ -13,8 +13,8 @@ class AjaxController extends Controller
      */
     public function product()
     {
-        if ($_POST['id']) {
-            $product = Product::find($_POST['id']);
+        if (isset($_GET['id'])) {
+            $product = Product::find($_GET['id']);
         } else {
             $product = Product::all();
         }
@@ -26,8 +26,8 @@ class AjaxController extends Controller
      */
     public function customer()
     {
-        if ($_POST['id']) {
-            $customer = Customer::find($_POST['id']);
+        if (isset($_GET['id'])) {
+            $customer = Customer::find($_GET['id']);
         } else {
             $customer = Customer::all();
         }

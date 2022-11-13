@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\SalesOrder;
-use App\Http\Requests\StoreSalesOrderRequest;
-use App\Http\Requests\UpdateSalesOrderRequest;
+use Illuminate\Http\Request;
+use App\Models\Customer;
 
 class SalesOrderController extends Controller
 {
@@ -28,18 +28,51 @@ class SalesOrderController extends Controller
      */
     public function create()
     {
-        //
+        $invoice = SalesOrder::latest()->first();
+        $explode = explode("/", $invoice->invoice);
+        $newInv = 'INV/' . date('Y-m-d') . '/' . intval($explode[2]) + 1;
+        // dd($newInv);
+        return view('order.addORder', [
+            'title' => 'Add Order',
+            'customers' => Customer::all(),
+            'invoice' => $newInv,
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreSalesOrderRequest  $request
+     * @param  \App\Http\Requests  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreSalesOrderRequest $request)
+    public function store(Request $request)
     {
-        //
+
+        // dd($request);
+
+        //validate order data
+        // $validateDataOrder = $request->validate([
+        //     'invoice' => 'required',
+        //     'customer_id' => 'required',
+        //     'date' => 'required',
+        //     'total_payment' => 'required',
+        // ]);
+
+        $salesOrder = SalesOrder::create([
+            'invoice' => $request->invoice,
+            'customer_id' => $request->customer,
+            'date' => $request->date,
+            'total_payment' => '600000',
+        ]);
+
+        foreach ($request->product as $index => $product) {
+            $salesOrder->order_details()->create([
+                'product_id' => $request->product[$index],
+                'qty' => $request->qty[$index],
+                'total' => $request->total_price[$index],
+            ]);
+            $index + 1;
+        }
     }
 
     /**

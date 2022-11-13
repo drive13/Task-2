@@ -14,4 +14,9 @@ class Product extends Model
         'price',
         'stock',
     ];
+
+    public function orderDetails()
+    {
+        return $this->belongsToMany(OrderDetails::class);
+    }
 }

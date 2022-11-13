@@ -11,9 +11,18 @@ class SalesOrder extends Model
 
     protected $fillable = [
         'invoice',
-        'date',
-        'product_id',
-        'qty',
         'customer_id',
+        'date',
+        'total_payment',
     ];
+
+    public function order_details()
+    {
+        return $this->hasMany(OrderDetails::class);
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
 }

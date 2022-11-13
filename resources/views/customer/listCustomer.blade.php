@@ -150,7 +150,7 @@
                     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                     url:'/ajax-customer',
                     data: {id : id},
-                    method: 'post',
+                    method: 'get',
                     dataType: 'json',
                     success: function(customer){
                         // console.log(customer);

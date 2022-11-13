@@ -21,11 +21,10 @@
             <div class="card">
                 <div class="card-content">
                     <div class="card-header d-flex">
-                        <a class="btn btn-sm btn-success ms-auto" href="{{ route('customer.create') }}">Add Sales Orders</a>
+                        <a class="btn btn-sm btn-success ms-auto" href="{{ route('orders.create') }}">Add Sales Orders</a>
                     </div>
                     <div class="card-body">
                     </div>
-                    <!-- table striped -->
                     <div class="table-responsive">
                         <table class="table table-striped mb-0">
                             <thead>
@@ -55,6 +54,7 @@
                             </tbody>
                         </table>
                     </div>
+                    <!-- table striped -->
                 </div>
             </div>
         </section>

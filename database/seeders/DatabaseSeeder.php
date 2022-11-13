@@ -56,17 +56,17 @@ class DatabaseSeeder extends Seeder
             'phone' => '081285820544',
             'address' => 'Cisauk, Tangerang',
         ]);
-        DB::table('sales_orders')->insert([
-            'invoice' => 'INV/11-11-22/0001',
-            'date' => '2022-11-11',
-            'product_id' => 1,
-            'customer_id' => 1,
-        ]);
-        DB::table('sales_orders')->insert([
-            'invoice' => 'INV/11-11-22/0002',
-            'date' => '2022-11-11',
-            'product_id' => 1,
-            'customer_id' => 2,
-        ]);
+        // DB::table('sales_orders')->insert([
+        //     'invoice' => 'INV/11-11-22/0001',
+        //     'customer_id' => 1,
+        //     'date' => '2022-11-11',
+        //     'total_payment' => '300000',
+        // ]);
+        // DB::table('sales_orders')->insert([
+        //     'invoice' => 'INV/11-11-22/0002',
+        //     'customer_id' => 1,
+        //     'date' => '2022-11-11',
+        //     'total_payment' => '500000',
+        // ]);
     }
 }
