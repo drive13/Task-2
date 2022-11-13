@@ -16,9 +16,9 @@ class SalesOrder extends Model
         'total_payment',
     ];
 
-    public function order_details()
+    public function details()
     {
-        return $this->hasMany(OrderDetails::class);
+        return $this->hasMany(OrderDetails::class, 'sales_order_id', 'id');
     }
 
     public function customer()

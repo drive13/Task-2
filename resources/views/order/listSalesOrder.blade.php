@@ -16,45 +16,69 @@
                     </nav>
                 </div>
             </div>
+            {{-- Message --}}
+            <div class="row">
+                <div class="col">
+                    @if ($errors->any())
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <h4>Error!!</h4>
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                            </button>
+                        </div>
+                    @endif
+                    @if ($message = Session::get('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>{!! $message !!}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                            </button>
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
         <section class="section">
             <div class="card">
                 <div class="card-content">
                     <div class="card-header d-flex">
-                        <a class="btn btn-sm btn-success ms-auto" href="{{ route('orders.create') }}">Add Sales Orders</a>
+                        <a class="btn btn-sm btn-success ms-auto" href="{{ route('orders.create') }}">Add New Orders</a>
                     </div>
                     <div class="card-body">
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-striped mb-0">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>No Invoice</th>
-                                    <th>Customer</th>
-                                    <th>Product</th>
-                                    <th>Date</th>
-                                    <th class="text-center">ACTION</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($orders as $index => $order)
+                        <div class="table-responsive">
+                            <table class="table table-striped mb-0">
+                                <thead>
                                     <tr>
-                                        <td>{{ $index+1 }}</td>
-                                        <td>{{ $order->invoice }}</td>
-                                        <td>{{ $order->customer_id }}</td>
-                                        <td>{{ $order->product_id }}</td>
-                                        <td>{{ $order->date }}</td>
-                                        <td class="text-center">
-                                            <a class="btn btn-sm btn-warning" href="">Edit</a>
-                                            <a class="btn btn-sm btn-danger" href="">Delete</a>
-                                        </td>
+                                        <th>No</th>
+                                        <th>No Invoice</th>
+                                        <th>Customer</th>
+                                        <th>Product</th>
+                                        <th>Date</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach ($orders as $index => $order)
+                                        <tr>
+                                            <td>{{ $index+1 }}</td>
+                                            <td>{{ $order->invoice }}</td>
+                                            <td>{{ $order->customer->name }}</td>
+                                            <td>
+                                                @foreach ($order->details as $detail)
+                                                    <div class="col">
+                                                        {{ $detail->product->product }}
+                                                    </div>
+                                                @endforeach
+                                            </td>
+                                            <td>{{ $order->date }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <!-- table striped -->
                 </div>
             </div>
         </section>

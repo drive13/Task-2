@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\SalesOrder;
 use Illuminate\Http\Request;
 use App\Models\Customer;
+use App\Models\Product;
+use Illuminate\Support\Facades\DB;
 
 class SalesOrderController extends Controller
 {
@@ -29,13 +31,18 @@ class SalesOrderController extends Controller
     public function create()
     {
         $invoice = SalesOrder::latest()->first();
-        $explode = explode("/", $invoice->invoice);
-        $newInv = 'INV/' . date('Y-m-d') . '/' . intval($explode[2]) + 1;
+        if ($invoice == null) {
+            $newInv = 'INV/' . date('Y-m-d') . '/' . '0001';
+        } else {
+            $explode = explode("/", $invoice->invoice);
+            $newInv = 'INV/' . date('Y-m-d') . '/' . intval($explode[2]) + 1;
+        }
         // dd($newInv);
         return view('order.addORder', [
             'title' => 'Add Order',
             'customers' => Customer::all(),
             'invoice' => $newInv,
+            'products' => Product::all(),
         ]);
     }
 
@@ -47,32 +54,33 @@ class SalesOrderController extends Controller
      */
     public function store(Request $request)
     {
-
         // dd($request);
-
-        //validate order data
-        // $validateDataOrder = $request->validate([
-        //     'invoice' => 'required',
-        //     'customer_id' => 'required',
-        //     'date' => 'required',
-        //     'total_payment' => 'required',
-        // ]);
-
-        $salesOrder = SalesOrder::create([
-            'invoice' => $request->invoice,
-            'customer_id' => $request->customer,
-            'date' => $request->date,
-            'total_payment' => '600000',
-        ]);
-
-        foreach ($request->product as $index => $product) {
-            $salesOrder->order_details()->create([
-                'product_id' => $request->product[$index],
-                'qty' => $request->qty[$index],
-                'total' => $request->total_price[$index],
+        DB::transaction(function () use ($request) {
+            $salesOrder = SalesOrder::create([
+                'invoice' => $request->invoice,
+                'customer_id' => $request->customer,
+                'date' => $request->date,
+                'total_payment' => '600000',
             ]);
-            $index + 1;
-        }
+
+            for ($i = 0; $i < count($request->product); $i++) {
+                $salesOrder->details()->create([
+                    'product_id' => $request->product[$i],
+                    'qty' => $request->qty[$i],
+                    'total' => $request->total_price[$i],
+                ]);
+                $stockUpdate = Product::where('id', $request->product[$i])->first();
+                // dd($request->product[$i], $stockUpdate);
+
+                $stockUpdate->stock = $stockUpdate->stock - $request->qty[$i];
+                $stockUpdate->save();
+            }
+        });
+
+
+
+
+        return redirect('/orders')->with('success', 'New order has been added successfully');
     }
 
     /**

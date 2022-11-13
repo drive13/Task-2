@@ -15,8 +15,8 @@ class Product extends Model
         'stock',
     ];
 
-    public function orderDetails()
+    public function orderDetail()
     {
-        return $this->belongsToMany(OrderDetails::class);
+        return $this->belongsToMany(OrderDetails::class, 'product_id', 'id');
     }
 }

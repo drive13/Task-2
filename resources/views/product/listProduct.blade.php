@@ -16,6 +16,7 @@
                     </nav>
                 </div>
             </div>
+            {{-- Message --}}
             <div class="row">
                 <div class="col">
                     @if ($errors->any())

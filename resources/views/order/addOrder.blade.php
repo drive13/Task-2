@@ -11,6 +11,7 @@
                     <nav aria-label="breadcrumb" class='breadcrumb-header'>
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('orders.index') }}">List Sales Orders</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Add Sales Orders</li>
                         </ol>
                     </nav>
@@ -21,7 +22,7 @@
             <div class="card">
                 <div class="card-content">
                     <div class="card-header d-flex">
-                        <a class="btn btn-sm btn-success ms-auto" href="{{ route('orders.create') }}">Add Sales Orders</a>
+                        {{-- <a class="btn btn-sm btn-success ms-auto" href="{{ route('orders.create') }}">Add Sales Orders</a> --}}
                     </div>
                     <div class="card-body">
                         <form  method="POST" action="{{route('orders.store')}}">
@@ -45,34 +46,51 @@
                                 <input type="date" class="form-control" id="date" name="date" value="{{ date('Y-m-d') }}" required>
                             </div>
                             <div class="table-responsive">
-                                <table class="table table-bordered">
+                                <table id="invoiceTable" class="table table-bordered">
                                     <thead>
                                         <tr>
                                             <th scope="col">Product</th>
                                             <th scope="col">Qty</th>
                                             <th scope="col">Price / pcs</th>
                                             <th scope="col">Total Price</th>
-                                            <th scope="col"><a class=" mx-auto btn btn-sm btn-success addRow"><i class="bi bi-plus-circle-dotted"></i></a></th>
+                                            {{-- <th>Action</th> --}}
+                                            {{-- <th scope="col"><a class=" mx-auto btn btn-sm btn-success addRow"><i class="bi bi-plus-circle-dotted"></i></a></th> --}}
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="products">
                                         <tr>
                                             <td>
-                                                {{-- <input type="text" name="product[]" class="form-control qty" > --}}
                                                 <select name="product[]" class="form-select productSelect" required>
                                                     <option selected disabled>-> Choose Product <-</option>
+                                                    @foreach ($products as $product)
+                                                    <option value="{{ $product->id }}">{{ $product->product }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td><input type="number" min="1" name="qty[]" class="form-control qty" value="1" required></td>
+                                            <td><input type="number" name="price[]" class="form-control price" readonly required></td>
+                                            <td><input type="number" name="total_price[]" class="form-control tot-price" readonly required></td>
+                                            {{-- <td><a class="btn btn-danger remove "> <i class="bi bi-trash3"></i></a></td> --}}
+                                        </tr>
+                                        {{-- <tr>
+                                            <td>
+                                                <select name="product[]" class="form-select productSelect" required>
+                                                    <option selected disabled>-> Choose Product <-</option>
+                                                    @foreach ($products as $product)
+                                                    <option value="{{ $product->id }}">{{ $product->product }}</option>
+                                                    @endforeach
                                                 </select>
                                             </td>
                                             <td><input type="number" min="1" name="qty[]" class="form-control qty" value="1" required></td>
                                             <td><input type="number" name="price[]" class="form-control price" readonly required></td>
                                             <td><input type="number" name="total_price[]" class="form-control tot-price" readonly required></td>
                                             <td><a class="btn btn-danger remove "> <i class="bi bi-trash3"></i></a></td>
-                                        </tr>
+                                        </tr> --}}
                                     </tbody>
                                     <tfoot>
                                         <tr>
                                             <td colspan="3" class="text-end fw-bold">Total Payment</td>
-                                            <td colspan="2"><input type="number" class="form-control total_payment" readonly></td>
+                                            <td colspan="2"><input type="number" name="total_payment" class="form-control total_payment" readonly></td>
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -96,28 +114,29 @@
 @section('scripts')
     <script type="text/javascript">
         $(document).ready(function(){
-            $('.productSelect').on('click', function () {
-                $('.productSelect').find('option').not(':selected').remove();
-                $.ajax({
-                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    url:'/ajax-product',
-                    method: 'get',
-                    dataType: 'json',
-                    success: function(product){
-                        // console.log(product);
-                        $.each(product, function(key, value) {   
-                            $('.productSelect')
-                                .append($("<option></option>")
-                                            .attr("value", value.id)
-                                            .text(value.product)); 
-                            });
-                    }
-                })
-            });
+        //     $('#products').on('click', '.productSelect', function () {
+        //         // alert("kena");
+        //         $('.productSelect').find('option').not(':selected').remove();
+        //         $.ajax({
+        //             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        //             url:'/ajax-product',
+        //             method: 'get',
+        //             dataType: 'json',
+        //             success: function(product){
+        //                 // console.log(product);
+        //                 $.each(product, function(key, value) {   
+        //                     $(this).find('.productSelect')
+        //                         .append($("<option></option>")
+        //                                     .attr("value", value.id)
+        //                                     .text(value.product)); 
+        //                     });
+        //             }
+        //         })
+        //     });
 
-            $('.productSelect').on('change', function () {
+            $('#invoiceTable').on('change', '.productSelect', function () {
                 const id = $('.productSelect').find(':selected').val();
-                console.log(id);
+                // console.log(id);
                 $.ajax({
                     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                     url:'/ajax-product',
@@ -130,15 +149,25 @@
                         // console.log(count * product.price);
                         $('.price').val(product.price);
                         $('.tot-price').val(product.price * count);
+                        $('.total_payment').val(product.price * count);
                     }
                 })
             });
+
+            // $('.tot-price').on('change', function(){
+            //     var count = $('.qty').val();
+            //     var price = $('.price').val();
+            //     // console.log(count);
+            //     $('.tot-price').val(price * count);
+
+            // });
 
             $('.qty').on('change', function(){
                 var count = $('.qty').val();
                 var price = $('.price').val();
                 // console.log(count);
                 $('.tot-price').val(price * count);
+                $('.total_payment').val(price * count);
 
             });
 
@@ -158,15 +187,24 @@
                 $('tbody').append(addRow);
             };
 
-            $('.remove').on('click', function () {
+            $('#invoiceTable').on('click', '.remove', function () {
                 var l = $('tbody tr').length;
-                console.log(l);
+                // console.log(l);
                 if(l==1){
-                    alert('you cant delete last one')
-                }else{
+                        alert('you cant delete last one')
+                    }else{
                     $(this).parent().parent().remove();
                 }
+
             });
+
+
+            // $(".addCF").click(function(){
+	        //     $("#customFields").append('<tr valign="top"><th scope="row"><label for="customFieldName">Custom Field</label></th><td><input type="text" class="code" id="customFieldName" name="customFieldName[]" value="" placeholder="Input Name" /> &nbsp; <input type="text" class="code" id="customFieldValue" name="customFieldValue[]" value="" placeholder="Input Value" /> &nbsp; <a href="javascript:void(0);" class="remCF">Remove</a></td></tr>');
+            // });
+            // $("#customFields").on('click','.remCF',function(){
+            //     $(this).parent().parent().remove();
+            // });
         });
 
 </script>

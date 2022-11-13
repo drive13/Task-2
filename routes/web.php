@@ -29,7 +29,7 @@ Route::resource('/product', ProductController::class)->middleware('auth');
 Route::resource('/customer', CustomerController::class)->middleware('auth');
 Route::resource('/orders', SalesOrderController::class)->middleware('auth');
 
-Route::post('/ajax-product', [AjaxController::class, 'product'])->middleware('auth');
-Route::post('/ajax-customer', [AjaxController::class, 'customer'])->middleware('auth');
+Route::get('/ajax-product', [AjaxController::class, 'product'])->middleware('auth');
+Route::get('/ajax-customer', [AjaxController::class, 'customer'])->middleware('auth');
 
 require __DIR__ . '/auth.php';
