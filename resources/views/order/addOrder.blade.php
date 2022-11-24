@@ -54,7 +54,7 @@
                                             <th scope="col">Price / pcs</th>
                                             <th scope="col">Total Price</th>
                                             {{-- <th>Action</th> --}}
-                                            {{-- <th scope="col"><a class=" mx-auto btn btn-sm btn-success addRow"><i class="bi bi-plus-circle-dotted"></i></a></th> --}}
+                                            <th scope="col"><a class=" mx-auto btn btn-sm btn-success addRow"><i class="bi bi-plus-circle-dotted"></i></a></th>
                                         </tr>
                                     </thead>
                                     <tbody id="products">
@@ -62,15 +62,15 @@
                                             <td>
                                                 <select name="product[]" class="form-select productSelect" required>
                                                     <option selected disabled>-> Choose Product <-</option>
-                                                    @foreach ($products as $product)
+                                                    {{-- @foreach ($products as $product)
                                                     <option value="{{ $product->id }}">{{ $product->product }}</option>
-                                                    @endforeach
+                                                    @endforeach --}}
                                                 </select>
                                             </td>
-                                            <td><input type="number" min="1" name="qty[]" class="form-control qty" value="1" required></td>
+                                            <td><input type="number" min="1" name="qty[]" class="form-control qty" value="0" required></td>
                                             <td><input type="number" name="price[]" class="form-control price" readonly required></td>
                                             <td><input type="number" name="total_price[]" class="form-control tot-price" readonly required></td>
-                                            {{-- <td><a class="btn btn-danger remove "> <i class="bi bi-trash3"></i></a></td> --}}
+                                            <td><a class="btn btn-danger remove "> <i class="bi bi-trash3"></i></a></td>
                                         </tr>
                                         {{-- <tr>
                                             <td>
@@ -87,12 +87,12 @@
                                             <td><a class="btn btn-danger remove "> <i class="bi bi-trash3"></i></a></td>
                                         </tr> --}}
                                     </tbody>
-                                    <tfoot>
+                                    {{-- <tfoot>
                                         <tr>
                                             <td colspan="3" class="text-end fw-bold">Total Payment</td>
                                             <td colspan="2"><input type="number" name="total_payment" class="form-control total_payment" readonly></td>
                                         </tr>
-                                    </tfoot>
+                                    </tfoot> --}}
                                 </table>
                             </div>
     
@@ -114,29 +114,28 @@
 @section('scripts')
     <script type="text/javascript">
         $(document).ready(function(){
-        //     $('#products').on('click', '.productSelect', function () {
-        //         // alert("kena");
-        //         $('.productSelect').find('option').not(':selected').remove();
-        //         $.ajax({
-        //             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        //             url:'/ajax-product',
-        //             method: 'get',
-        //             dataType: 'json',
-        //             success: function(product){
-        //                 // console.log(product);
-        //                 $.each(product, function(key, value) {   
-        //                     $(this).find('.productSelect')
-        //                         .append($("<option></option>")
-        //                                     .attr("value", value.id)
-        //                                     .text(value.product)); 
-        //                     });
-        //             }
-        //         })
-        //     });
+            $('#products').on('click', '.productSelect', function (e) {
+                
+                // $(this).e.target.
+                $(this).find('option').not(':selected').remove();
+                $.ajax({
+                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    url:'/ajax-product',
+                    method: 'get',
+                    dataType: 'json',
+                    success: function(product){
+                        $.each(product, function(key, value) {   
+                            $(e.target).append($("<option></option>")
+                                            .attr("value", value.id)
+                                            .text(value.product)); 
+                            });
+                    }
+                })
+            });
 
-            $('#invoiceTable').on('change', '.productSelect', function () {
-                const id = $('.productSelect').find(':selected').val();
-                // console.log(id);
+            $('#products').on('change', '.productSelect', function (e) {
+                const id = $(this).find(':selected').val();
+                let self = this;
                 $.ajax({
                     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                     url:'/ajax-product',
@@ -144,14 +143,11 @@
                     method: 'get',
                     dataType: 'json',
                     success: function(product){
-                        console.log(product);
-                        var count = $('.qty').val();
-                        // console.log(count * product.price);
-                        $('.price').val(product.price);
-                        $('.tot-price').val(product.price * count);
-                        $('.total_payment').val(product.price * count);
+                        $(self.parentElement.parentElement).find('.qty').val(0);
+                        $(self.parentElement.parentElement).find('.price').val(product.price);
+                        // $(self.parentElement.parentElement).find('.tot-price').val(product.price);
                     }
-                })
+                });
             });
 
             // $('.tot-price').on('change', function(){
@@ -162,14 +158,22 @@
 
             // });
 
-            $('.qty').on('change', function(){
-                var count = $('.qty').val();
-                var price = $('.price').val();
-                // console.log(count);
-                $('.tot-price').val(price * count);
-                $('.total_payment').val(price * count);
+            $('#products').on('change', '.qty',function(e){
+                // const countPayment = $('#products .tot-price').each(function(){
+                    
+                // });
+                // const totalPayment = $('#products .total_payment');
+                let pricePcs = $(this.parentElement.parentElement).find('.price').val();
+                let qty = $(this.parentElement.parentElement).find('.qty').val();
+                $(this.parentElement.parentElement).find('.tot-price').val(qty * pricePcs);
 
+                // console.log(countPayment);
+                // countPayment.each(function(){
+                //     count += countPayment.val();
+                // });
+                // console.log(count);
             });
+
 
             $('.addRow').on('click', function () {
                 addRow();
@@ -178,8 +182,8 @@
             function addRow() {
                 var addRow = 
                 '<tr>\n' +
-                    '<td><select class="form-select productSelect"><option selected disabled>-> Choose Product <-</option></select></td>\n' +
-                    '<td><input type="number" min="1" name="qty[]" class="form-control qty" value="1"></td>\n' +
+                    '<td><select class="form-select productSelect" name="product[]"><option selected disabled>-> Choose Product <-</option></select></td>\n' +
+                    '<td><input type="number" min="1" name="qty[]" class="form-control qty" value="0"></td>\n' +
                     '<td><input type="number" name="price[]" class="form-control price" readonly></td>\n' +
                     '<td><input type="number" name="total_price[]" class="form-control tot-price" readonly></td>\n' +
                     '<td><a class="btn btn-danger remove "> <i class="bi bi-trash3"></i></a></td>\n' +
@@ -198,14 +202,21 @@
 
             });
 
-
-            // $(".addCF").click(function(){
-	        //     $("#customFields").append('<tr valign="top"><th scope="row"><label for="customFieldName">Custom Field</label></th><td><input type="text" class="code" id="customFieldName" name="customFieldName[]" value="" placeholder="Input Name" /> &nbsp; <input type="text" class="code" id="customFieldValue" name="customFieldValue[]" value="" placeholder="Input Value" /> &nbsp; <a href="javascript:void(0);" class="remCF">Remove</a></td></tr>');
-            // });
-            // $("#customFields").on('click','.remCF',function(){
-            //     $(this).parent().parent().remove();
-            // });
         });
 
 </script>
+{{-- <script>
+    const table = document.getElementById('invoiceTable');
+    const total_payment = document.querySelector('.total_payment');
+    // console.log(total_payment);
+    
+    table.addEventListener('change', function(e){
+        const total = document.querySelectorAll('.tot-price');
+        total.forEach(element => {
+            
+        });
+        console.log(totalBayar);
+        // total_payment.value = totalBayar;
+    });
+</script> --}}
 @endsection

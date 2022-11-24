@@ -55,24 +55,28 @@ class SalesOrderController extends Controller
     public function store(Request $request)
     {
         // dd($request);
-        DB::transaction(function () use ($request) {
+        $total_payment = 0;
+        for ($i = 0; $i < count($request->total_price); $i++) {
+            $total_payment += $request->total_price[$i];
+        }
+        DB::transaction(function () use ($request, $total_payment) {
             $salesOrder = SalesOrder::create([
                 'invoice' => $request->invoice,
                 'customer_id' => $request->customer,
                 'date' => $request->date,
-                'total_payment' => '600000',
+                'total_payment' => $total_payment,
             ]);
 
-            for ($i = 0; $i < count($request->product); $i++) {
+            for ($j = 0; $j < count($request->product); $j++) {
                 $salesOrder->details()->create([
-                    'product_id' => $request->product[$i],
-                    'qty' => $request->qty[$i],
-                    'total' => $request->total_price[$i],
+                    'product_id' => $request->product[$j],
+                    'qty' => $request->qty[$j],
+                    'total' => $request->total_price[$j],
                 ]);
-                $stockUpdate = Product::where('id', $request->product[$i])->first();
-                // dd($request->product[$i], $stockUpdate);
+                $stockUpdate = Product::where('id', $request->product[$j])->first();
+                // dd($request->product[$j], $stockUpdate);
 
-                $stockUpdate->stock = $stockUpdate->stock - $request->qty[$i];
+                $stockUpdate->stock = $stockUpdate->stock - $request->qty[$j];
                 $stockUpdate->save();
             }
         });

@@ -57,6 +57,7 @@
                                         <th>Customer</th>
                                         <th>Product</th>
                                         <th>Date</th>
+                                        <th>Total</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -73,6 +74,7 @@
                                                 @endforeach
                                             </td>
                                             <td>{{ $order->date }}</td>
+                                            <td>Rp. {{ $order->total_payment }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
